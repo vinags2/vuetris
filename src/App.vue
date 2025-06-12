@@ -361,7 +361,7 @@ onUnmounted(() => {
           </div>
           
           <!-- Bottom Left Corner -->
-          <div class="absolute left-0 bottom-0 w-6 h-6 bg-emerald-800 shadow-lg overflow-hidden rounded-bl-lg">
+          <div class="absolute left-0 bottom-0 w-6 h-6 bg-emerald-800 shadow-lg overflow-hidden">
             <div class="absolute inset-0">
               <!-- Vertical line -->
               <div class="absolute left-3 top-0 bottom-0 w-px bg-emerald-900"></div>
@@ -376,7 +376,7 @@ onUnmounted(() => {
           </div>
           
           <!-- Bottom Right Corner -->
-          <div class="absolute right-0 bottom-0 w-6 h-6 bg-emerald-800 shadow-lg overflow-hidden rounded-br-lg">
+          <div class="absolute right-0 bottom-0 w-6 h-6 bg-emerald-800 shadow-lg overflow-hidden">
             <div class="absolute inset-0">
               <!-- Vertical line -->
               <div class="absolute left-3 top-0 bottom-0 w-px bg-emerald-900"></div>
