@@ -349,9 +349,7 @@ onUnmounted(() => {
             <div class="absolute inset-0 flex">
               <div v-for="i in Math.ceil(COLS * 2)" :key="'bottom-' + i" 
                    class="h-6 w-3 relative">
-                <!-- Vertical line between bricks -->
-                <div class="absolute right-0 top-0 bottom-0 w-px bg-emerald-900"></div>
-                <!-- Brick halves -->
+                <!-- Brick halves without vertical lines -->
                 <div v-if="i % 2 === 0" class="h-3 w-3 bg-emerald-700"></div>
                 <div v-else class="h-3 w-3 bg-emerald-800"></div>
                 <div v-if="i % 2 === 0" class="h-3 w-3 bg-emerald-800"></div>
@@ -383,10 +381,10 @@ onUnmounted(() => {
               <!-- Horizontal line -->
               <div class="absolute left-0 right-0 top-3 h-px bg-emerald-900"></div>
               <!-- Corner pieces -->
-              <div class="h-3 w-3 bg-emerald-700 absolute top-0 left-0"></div>
-              <div class="h-3 w-3 bg-emerald-800 absolute top-0 right-0"></div>
-              <div class="h-3 w-3 bg-emerald-800 absolute bottom-0 left-0"></div>
-              <div class="h-3 w-3 bg-emerald-700 absolute bottom-0 right-0"></div>
+              <div class="h-3 w-3 bg-emerald-800 absolute top-0 left-0"></div>
+              <div class="h-3 w-3 bg-emerald-700 absolute top-0 right-0"></div>
+              <div class="h-3 w-3 bg-emerald-700 absolute bottom-0 left-0"></div>
+              <div class="h-3 w-3 bg-emerald-800 absolute bottom-0 right-0"></div>
             </div>
           </div>
         </div>
