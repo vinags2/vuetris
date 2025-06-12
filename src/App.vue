@@ -424,7 +424,7 @@ function shouldShowNextPieceBlock(gridX, gridY) {
       </svg>
       <span class="text-sm font-medium">Check out the code on GitHub</span>
     </a>
-    <h1 class="text-4xl font-bold mb-6 text-center font-mono">VueTris</h1>
+    <h1 class="text-4xl font-bold mb-6 text-center font-mono">vuetris</h1>
 
     <div class="flex flex-col md:flex-row gap-8 items-start">
       <!-- Game Board -->
