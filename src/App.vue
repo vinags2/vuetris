@@ -60,25 +60,60 @@ const nextPiece = ref(null);
 const currentPiece = ref(null);
 const currentPosition = ref({ x: 0, y: 0 });
 const gameLoop = ref(null);
+const gameIdle = ref(true); // Flag to indicate if the game is currently not being played
+const startEndGameText = ref("New Game");
 
 // Computed property for game speed based on level
 const speed = computed(() => Math.max(100, 1000 - (level.value - 1) * 100));
 
 /**
- * Initialize a new game
+ * Start/End game
  */
-function initGame(autostart = true) {
-  board.value = createBoard();
-  score.value = 0;
-  level.value = 1;
-  lines.value = 0;
+function startEndGame() {
+  if (gameIdle.value) {
+    // Start a new game
+    startGame();
+  } else {
+    endGame();
+  }
+}
+
+/**
+ * End the game
+ */
+function endGame() {
+  gameOver.value = true;
+  gameIdle.value = true;
+  if (gameLoop.value) clearInterval(gameLoop.value);
+  startEndGameText.value = "New Game";
+}
+
+/**
+ * Start a new game which has been prepared
+ */
+function startGame() {
+  initGame();
+  gameIdle.value = false;
   gameOver.value = false;
+  isPaused.value = false;
   nextPiece.value = generatePiece();
-  if (autostart) spawnPiece();
+  spawnPiece();
 
   // Reset game loop with current speed
   if (gameLoop.value) clearInterval(gameLoop.value);
   gameLoop.value = setInterval(moveDown, speed.value);
+
+  startEndGameText.value = "End Game";
+}
+
+/**
+ * Prepare for a new game
+ */
+function initGame() {
+  board.value = createBoard();
+  score.value = 0;
+  level.value = 1;
+  lines.value = 0;
 }
 
 /**
@@ -597,7 +632,7 @@ function shouldShowNextPieceBlock(gridX, gridY) {
         >
           <h1 class="mb-6 text-3xl font-bold text-emerald-500">Game Over</h1>
           <button
-            @click="initGame"
+            @click="startGame"
             class="rounded bg-emerald-600 px-6 py-2 font-bold transition-colors hover:bg-emerald-500"
           >
             Play Again
@@ -669,10 +704,10 @@ function shouldShowNextPieceBlock(gridX, gridY) {
               {{ isPaused ? "Resume" : "Pause" }}
             </button>
             <button
-              @click="initGame"
+              @click="startEndGame"
               class="w-full rounded bg-emerald-600 py-2 font-bold transition-colors hover:bg-emerald-500"
             >
-              New Game
+              {{ startEndGameText }}
             </button>
           </div>
 
