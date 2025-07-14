@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from "vue";
 
 // Game constants
 const COLS = 12; // +2 for side walls
@@ -10,25 +10,43 @@ const BORDER = 9; // Solid border color (darkest green)
 // Tetromino shapes with different colors
 const SHAPES = [
   [[1, 1, 1, 1]], // I-piece (line)
-  [[1, 1], [1, 1]], // O-piece (square)
-  [[1, 1, 1], [0, 1, 0]], // T-piece
-  [[1, 1, 1], [1, 0, 0]], // L-piece
-  [[1, 1, 1], [0, 0, 1]], // J-piece
-  [[1, 1, 0], [0, 1, 1]], // S-piece
-  [[0, 1, 1], [1, 1, 0]]  // Z-piece
+  [
+    [1, 1],
+    [1, 1],
+  ], // O-piece (square)
+  [
+    [1, 1, 1],
+    [0, 1, 0],
+  ], // T-piece
+  [
+    [1, 1, 1],
+    [1, 0, 0],
+  ], // L-piece
+  [
+    [1, 1, 1],
+    [0, 0, 1],
+  ], // J-piece
+  [
+    [1, 1, 0],
+    [0, 1, 1],
+  ], // S-piece
+  [
+    [0, 1, 1],
+    [1, 1, 0],
+  ], // Z-piece
 ];
 
 // Color classes for different tetrominoes
 const COLORS = [
-  'bg-emerald-100', // I-piece (light green)
-  'bg-emerald-200', // O-piece
-  'bg-emerald-300', // T-piece
-  'bg-emerald-400', // L-piece
-  'bg-emerald-500', // J-piece
-  'bg-emerald-600', // S-piece
-  'bg-emerald-700', // Z-piece
-  'bg-emerald-800', // Border
-  'bg-emerald-900'  // Background
+  "bg-emerald-100", // I-piece (light green)
+  "bg-emerald-200", // O-piece
+  "bg-emerald-300", // T-piece
+  "bg-emerald-400", // L-piece
+  "bg-emerald-500", // J-piece
+  "bg-emerald-600", // S-piece
+  "bg-emerald-700", // Z-piece
+  "bg-emerald-800", // Border
+  "bg-emerald-900", // Background
 ];
 
 // Game state variables
@@ -49,14 +67,14 @@ const speed = computed(() => Math.max(100, 1000 - (level.value - 1) * 100));
 /**
  * Initialize a new game
  */
-function initGame() {
+function initGame(autostart = true) {
   board.value = createBoard();
   score.value = 0;
   level.value = 1;
   lines.value = 0;
   gameOver.value = false;
   nextPiece.value = generatePiece();
-  spawnPiece();
+  if (autostart) spawnPiece();
 
   // Reset game loop with current speed
   if (gameLoop.value) clearInterval(gameLoop.value);
@@ -69,7 +87,9 @@ function initGame() {
  */
 function createBoard() {
   // Create a grid with all empty cells
-  const grid = Array(ROWS).fill().map(() => Array(COLS).fill(EMPTY));
+  const grid = Array(ROWS)
+    .fill()
+    .map(() => Array(COLS).fill(EMPTY));
 
   // Add solid side walls (will be covered by brick border)
   for (let y = 0; y < ROWS; y++) {
@@ -95,7 +115,7 @@ function generatePiece() {
     shape: SHAPES[shapeIndex],
     color: shapeIndex + 1,
     width: SHAPES[shapeIndex][0].length,
-    height: SHAPES[shapeIndex].length
+    height: SHAPES[shapeIndex].length,
   };
 }
 
@@ -109,7 +129,7 @@ function spawnPiece() {
   // Spawn pieces centered in the playfield (between walls)
   currentPosition.value = {
     x: Math.floor(COLS / 2) - Math.floor(currentPiece.value.width / 2),
-    y: 0
+    y: 0,
   };
 
   // Check for game over condition
@@ -199,7 +219,12 @@ function mergePiece() {
         const boardY = y + py;
         const boardX = x + px;
         // Only merge if within bounds (not on walls or below)
-        if (boardY >= 0 && boardY < ROWS - 1 && boardX > 0 && boardX < COLS - 1) {
+        if (
+          boardY >= 0 &&
+          boardY < ROWS - 1 &&
+          boardX > 0 &&
+          boardX < COLS - 1
+        ) {
           board.value[boardY][boardX] = currentPiece.value.color;
         }
       }
@@ -317,7 +342,7 @@ function rotate() {
     ...currentPiece.value,
     shape: rotated,
     width: rotated[0].length,
-    height: rotated.length
+    height: rotated.length,
   };
 
   // Check if rotation is possible at current position
@@ -362,22 +387,24 @@ function togglePause() {
  * @param {KeyboardEvent} e - The keyboard event
  */
 function handleKeyDown(e) {
-  if (e.key === 'ArrowLeft') moveLeft();
-  else if (e.key === 'ArrowRight') moveRight();
-  else if (e.key === 'ArrowDown') moveDown();
-  else if (e.key === 'ArrowUp') rotate();
-  else if (e.key === ' ') { e.preventDefault(); drop(); }
-  else if (e.key === 'p' || e.key === 'P') togglePause();
+  if (e.key === "ArrowLeft") moveLeft();
+  else if (e.key === "ArrowRight") moveRight();
+  else if (e.key === "ArrowDown") moveDown();
+  else if (e.key === "ArrowUp") rotate();
+  else if (e.key === " ") {
+    e.preventDefault();
+    drop();
+  } else if (e.key === "p" || e.key === "P") togglePause();
 }
 
 // Vue lifecycle hooks
 onMounted(() => {
-  window.addEventListener('keydown', handleKeyDown);
-  initGame();
+  window.addEventListener("keydown", handleKeyDown);
+  initGame(false);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeyDown);
+  window.removeEventListener("keydown", handleKeyDown);
   if (gameLoop.value) clearInterval(gameLoop.value);
 });
 
@@ -402,8 +429,12 @@ function shouldShowNextPieceBlock(gridX, gridY) {
   const pieceY = gridY - offsetY;
 
   // Check if this grid position corresponds to a piece block
-  if (pieceY >= 0 && pieceY < piece.height &&
-    pieceX >= 0 && pieceX < piece.width) {
+  if (
+    pieceY >= 0 &&
+    pieceY < piece.height &&
+    pieceX >= 0 &&
+    pieceX < piece.width
+  ) {
     return piece.shape[pieceY] && piece.shape[pieceY][pieceX];
   }
 
@@ -412,46 +443,76 @@ function shouldShowNextPieceBlock(gridX, gridY) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-emerald-900 text-emerald-100 flex flex-col items-center justify-center p-4 relative">
+  <div
+    class="relative flex min-h-screen flex-col items-center justify-center bg-emerald-900 p-4 text-emerald-100"
+  >
     <!-- GitHub Link Card -->
-    <a href="https://github.com/Mint-Diary/vuetris" 
-       target="_blank" 
-       rel="noopener noreferrer"
-       class="absolute bottom-4 right-4 bg-emerald-800/90 hover:bg-emerald-700/90 rounded-lg p-3 flex items-center gap-2 transition-colors duration-300 border border-emerald-700/50 hover:border-emerald-500/50 shadow-lg">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-        <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+    <a
+      href="https://github.com/Mint-Diary/vuetris"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="absolute right-4 bottom-4 flex items-center gap-2 rounded-lg border border-emerald-700/50 bg-emerald-800/90 p-3 shadow-lg transition-colors duration-300 hover:border-emerald-500/50 hover:bg-emerald-700/90"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-5 w-5"
+      >
+        <path
+          d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"
+        ></path>
         <path d="M9 18c-4.51 2-5-2-7-2"></path>
       </svg>
       <span class="text-sm font-medium">Check out the code on GitHub</span>
     </a>
-    <h1 class="text-4xl font-bold mb-6 text-center font-mono">vuetris</h1>
+    <h1 class="mb-6 text-center font-mono text-4xl font-bold">vuetris</h1>
 
-    <div class="flex flex-col md:flex-row gap-8 items-start">
+    <div class="flex flex-col items-start gap-8 md:flex-row">
       <!-- Game Board -->
-      <div class="relative bg-emerald-900 p-0 rounded overflow-hidden">
+      <div class="relative overflow-hidden rounded bg-emerald-900 p-0">
         <!-- Brick Border - Consistent pattern on all sides -->
-        <div class="absolute inset-0 pointer-events-none overflow-visible z-20">
+        <div class="pointer-events-none absolute inset-0 z-20 overflow-visible">
           <!-- Left Brick Wall -->
-          <div class="absolute left-0 top-0 bottom-0 w-6 bg-emerald-800 shadow-lg">
-            <div v-for="i in Math.ceil(ROWS * 2)" :key="'left-' + i"
-                 class="h-3 border-b border-emerald-900"
-                 :class="{'bg-emerald-700': i % 2 === 0}">
-            </div>
+          <div
+            class="absolute top-0 bottom-0 left-0 w-6 bg-emerald-800 shadow-lg"
+          >
+            <div
+              v-for="i in Math.ceil(ROWS * 2)"
+              :key="'left-' + i"
+              class="h-3 border-b border-emerald-900"
+              :class="{ 'bg-emerald-700': i % 2 === 0 }"
+            ></div>
           </div>
 
           <!-- Right Brick Wall -->
-          <div class="absolute right-0 top-0 bottom-0 w-6 bg-emerald-800 shadow-lg">
-            <div v-for="i in Math.ceil(ROWS * 2)" :key="'right-' + i"
-                 class="h-3 border-b border-emerald-900"
-                 :class="{'bg-emerald-700': i % 2 === 0}">
-            </div>
+          <div
+            class="absolute top-0 right-0 bottom-0 w-6 bg-emerald-800 shadow-lg"
+          >
+            <div
+              v-for="i in Math.ceil(ROWS * 2)"
+              :key="'right-' + i"
+              class="h-3 border-b border-emerald-900"
+              :class="{ 'bg-emerald-700': i % 2 === 0 }"
+            ></div>
           </div>
 
           <!-- Bottom Brick Wall -->
-          <div class="absolute left-0 right-0 bottom-0 h-6 bg-emerald-800 shadow-lg">
+          <div
+            class="absolute right-0 bottom-0 left-0 h-6 bg-emerald-800 shadow-lg"
+          >
             <div class="absolute inset-0 flex">
-              <div v-for="i in Math.ceil(COLS * 2)" :key="'bottom-' + i"
-                   class="h-6 w-3 relative">
+              <div
+                v-for="i in Math.ceil(COLS * 2)"
+                :key="'bottom-' + i"
+                class="relative h-6 w-3"
+              >
                 <!-- Brick halves without vertical lines -->
                 <div v-if="i % 2 === 0" class="h-3 w-3 bg-emerald-700"></div>
                 <div v-else class="h-3 w-3 bg-emerald-800"></div>
@@ -462,51 +523,69 @@ function shouldShowNextPieceBlock(gridX, gridY) {
           </div>
 
           <!-- Bottom Left Corner -->
-          <div class="absolute left-0 bottom-0 w-6 h-6 bg-emerald-800 shadow-lg overflow-hidden">
+          <div
+            class="absolute bottom-0 left-0 h-6 w-6 overflow-hidden bg-emerald-800 shadow-lg"
+          >
             <div class="absolute inset-0">
               <!-- Vertical line -->
-              <div class="absolute left-3 top-0 bottom-0 w-px bg-emerald-900"></div>
+              <div
+                class="absolute top-0 bottom-0 left-3 w-px bg-emerald-900"
+              ></div>
               <!-- Horizontal line -->
-              <div class="absolute left-0 right-0 top-3 h-px bg-emerald-900"></div>
+              <div
+                class="absolute top-3 right-0 left-0 h-px bg-emerald-900"
+              ></div>
               <!-- Corner pieces -->
-              <div class="h-3 w-3 bg-emerald-800 absolute top-0 left-0"></div>
-              <div class="h-3 w-3 bg-emerald-700 absolute top-0 right-0"></div>
-              <div class="h-3 w-3 bg-emerald-700 absolute bottom-0 left-0"></div>
-              <div class="h-3 w-3 bg-emerald-800 absolute bottom-0 right-0"></div>
+              <div class="absolute top-0 left-0 h-3 w-3 bg-emerald-800"></div>
+              <div class="absolute top-0 right-0 h-3 w-3 bg-emerald-700"></div>
+              <div
+                class="absolute bottom-0 left-0 h-3 w-3 bg-emerald-700"
+              ></div>
+              <div
+                class="absolute right-0 bottom-0 h-3 w-3 bg-emerald-800"
+              ></div>
             </div>
           </div>
 
           <!-- Bottom Right Corner -->
-          <div class="absolute right-0 bottom-0 w-6 h-6 bg-emerald-800 shadow-lg overflow-hidden">
+          <div
+            class="absolute right-0 bottom-0 h-6 w-6 overflow-hidden bg-emerald-800 shadow-lg"
+          >
             <div class="absolute inset-0">
               <!-- Vertical line -->
-              <div class="absolute left-3 top-0 bottom-0 w-px bg-emerald-900"></div>
+              <div
+                class="absolute top-0 bottom-0 left-3 w-px bg-emerald-900"
+              ></div>
               <!-- Horizontal line -->
-              <div class="absolute left-0 right-0 top-3 h-px bg-emerald-900"></div>
+              <div
+                class="absolute top-3 right-0 left-0 h-px bg-emerald-900"
+              ></div>
               <!-- Corner pieces -->
-              <div class="h-3 w-3 bg-emerald-800 absolute top-0 left-0"></div>
-              <div class="h-3 w-3 bg-emerald-700 absolute top-0 right-0"></div>
-              <div class="h-3 w-3 bg-emerald-700 absolute bottom-0 left-0"></div>
-              <div class="h-3 w-3 bg-emerald-800 absolute bottom-0 right-0"></div>
+              <div class="absolute top-0 left-0 h-3 w-3 bg-emerald-800"></div>
+              <div class="absolute top-0 right-0 h-3 w-3 bg-emerald-700"></div>
+              <div
+                class="absolute bottom-0 left-0 h-3 w-3 bg-emerald-700"
+              ></div>
+              <div
+                class="absolute right-0 bottom-0 h-3 w-3 bg-emerald-800"
+              ></div>
             </div>
           </div>
         </div>
 
         <!-- Game Grid -->
-        <div
-          v-for="(row, y) in draw()"
-          :key="y"
-          class="flex"
-        >
+        <div v-for="(row, y) in draw()" :key="y" class="flex">
           <div
             v-for="(cell, x) in row"
             :key="x"
             :class="[
-              'w-6 h-6 relative z-0',
+              'relative z-0 h-6 w-6',
               // Only show grid lines for empty cells and not for the border cells
-              cell === EMPTY ? 'border border-emerald-800' : 'border border-emerald-900',
+              cell === EMPTY
+                ? 'border border-emerald-800'
+                : 'border border-emerald-900',
               cell !== EMPTY ? COLORS[cell - 1] : 'bg-emerald-900/80',
-              cell === BORDER ? '!border-emerald-900' : ''
+              cell === BORDER ? '!border-emerald-900' : '',
             ]"
           ></div>
         </div>
@@ -514,12 +593,12 @@ function shouldShowNextPieceBlock(gridX, gridY) {
         <!-- Game Over Overlay -->
         <div
           v-if="gameOver"
-          class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center z-30"
+          class="bg-opacity-75 absolute inset-0 z-30 flex flex-col items-center justify-center bg-black"
         >
-          <h1 class="text-3xl font-bold text-emerald-500 mb-6">Game Over</h1>
+          <h1 class="mb-6 text-3xl font-bold text-emerald-500">Game Over</h1>
           <button
             @click="initGame"
-            class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 rounded font-bold transition-colors"
+            class="rounded bg-emerald-600 px-6 py-2 font-bold transition-colors hover:bg-emerald-500"
           >
             Play Again
           </button>
@@ -528,35 +607,33 @@ function shouldShowNextPieceBlock(gridX, gridY) {
         <!-- Pause Overlay -->
         <div
           v-else-if="isPaused"
-          class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30"
+          class="bg-opacity-50 absolute inset-0 z-30 flex items-center justify-center bg-black"
         >
           <div class="text-3xl font-bold">PAUSED</div>
         </div>
       </div>
 
       <!-- Game Info Panel -->
-      <div class="bg-emerald-800 p-6 rounded-lg w-64">
+      <div class="w-64 rounded-lg bg-emerald-800 p-6">
         <!-- Next Piece Preview -->
         <div class="mb-6">
-          <h2 class="text-xl font-bold mb-2">Next Piece:</h2>
-          <div class="bg-emerald-900 p-4 rounded flex justify-center items-center h-20">
+          <h2 class="mb-2 text-xl font-bold">Next Piece:</h2>
+          <div
+            class="flex h-20 items-center justify-center rounded bg-emerald-900 p-4"
+          >
             <!-- Fixed size container for next piece to prevent layout shifts -->
-            <div class="grid grid-cols-4 gap-0.5 w-20 h-16">
+            <div class="grid h-16 w-20 grid-cols-4 gap-0.5">
               <template v-if="nextPiece">
                 <!-- Create a 4x4 grid and position the piece in the center -->
-                <div
-                  v-for="gridY in 4"
-                  :key="'grid-' + gridY"
-                  class="contents"
-                >
+                <div v-for="gridY in 4" :key="'grid-' + gridY" class="contents">
                   <div
                     v-for="gridX in 4"
                     :key="'cell-' + gridX + '-' + gridY"
                     :class="[
-                      'w-4 h-4',
+                      'h-4 w-4',
                       shouldShowNextPieceBlock(gridX - 1, gridY - 1)
                         ? COLORS[nextPiece.color - 1]
-                        : 'bg-transparent'
+                        : 'bg-transparent',
                     ]"
                   ></div>
                 </div>
@@ -583,17 +660,17 @@ function shouldShowNextPieceBlock(gridX, gridY) {
           </div>
 
           <!-- Game Controls -->
-          <div class="pt-4 space-y-2">
+          <div class="space-y-2 pt-4">
             <button
               @click="togglePause"
               :disabled="gameOver"
-              class="w-full py-2 bg-emerald-700 hover:bg-emerald-600 disabled:bg-emerald-800 disabled:opacity-50 rounded font-bold transition-colors"
+              class="w-full rounded bg-emerald-700 py-2 font-bold transition-colors hover:bg-emerald-600 disabled:bg-emerald-800 disabled:opacity-50"
             >
-              {{ isPaused ? 'Resume' : 'Pause' }}
+              {{ isPaused ? "Resume" : "Pause" }}
             </button>
             <button
               @click="initGame"
-              class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 rounded font-bold transition-colors"
+              class="w-full rounded bg-emerald-600 py-2 font-bold transition-colors hover:bg-emerald-500"
             >
               New Game
             </button>
@@ -601,7 +678,7 @@ function shouldShowNextPieceBlock(gridX, gridY) {
 
           <!-- Control Instructions -->
           <div class="pt-4 text-sm text-emerald-400">
-            <div class="font-bold mb-1">Controls:</div>
+            <div class="mb-1 font-bold">Controls:</div>
             <div>← → : Move left/right</div>
             <div>↑ : Rotate piece</div>
             <div>↓ : Soft drop</div>
