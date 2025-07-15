@@ -726,11 +726,26 @@ function shouldShowNextPieceBlock(gridX, gridY) {
           <!-- Control Instructions -->
           <div class="pt-4 text-sm text-emerald-400">
             <div class="mb-1 font-bold">Controls:</div>
-            <div>← → : Move left/right</div>
-            <div>↑ : Rotate piece</div>
-            <div>↓ : Soft drop</div>
-            <div>Space : Hard drop</div>
-            <div>P : Pause game</div>
+            <div class="grid grid-cols-3 gap-1">
+              <div>← →</div>
+              <div class="col-span-2">Move left/right</div>
+            </div>
+            <div class="grid grid-cols-3 gap-1">
+              <div>↑</div>
+              <div class="col-span-2">Rotate piece</div>
+            </div>
+            <div class="grid grid-cols-3 gap-1">
+              <div>↓</div>
+              <div class="col-span-2">Soft drop</div>
+            </div>
+            <div class="grid grid-cols-3 gap-1">
+              <div>Space</div>
+              <div class="col-span-2">Hard drop</div>
+            </div>
+            <div class="grid grid-cols-3 gap-1">
+              <div>P</div>
+              <div class="col-span-2">Pause game</div>
+            </div>
           </div>
         </div>
       </div>
