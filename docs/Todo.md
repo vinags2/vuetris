@@ -7,3 +7,4 @@
 - add changing of themes (eg colours)
 - add a Settings and About and Help and Scoring screens
 - improve the 'are you sure' screen when erasing scores
+- add a top border to the gameboard's frame
