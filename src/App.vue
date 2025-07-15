@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import HighScores from "./components/HighScores.vue";
 
 // Game constants
 const COLS = 12; // +2 for side walls
@@ -61,17 +62,19 @@ const currentPiece = ref(null);
 const currentPosition = ref({ x: 0, y: 0 });
 const gameLoop = ref(null);
 const gameIdle = ref(true); // Flag to indicate if the game is currently not being played
-const startEndGameText = ref("New Game");
+const saveScores = ref(false);
 
 // Computed property for game speed based on level
 const speed = computed(() => Math.max(100, 1000 - (level.value - 1) * 100));
+const startEndGameText = computed(() =>
+  gameIdle.value ? "Start Game" : "End Game",
+);
 
 /**
  * Start/End game
  */
 function startEndGame() {
   if (gameIdle.value) {
-    // Start a new game
     startGame();
   } else {
     endGame();
@@ -85,7 +88,6 @@ function endGame() {
   gameOver.value = true;
   gameIdle.value = true;
   if (gameLoop.value) clearInterval(gameLoop.value);
-  startEndGameText.value = "New Game";
 }
 
 /**
@@ -102,8 +104,6 @@ function startGame() {
   // Reset game loop with current speed
   if (gameLoop.value) clearInterval(gameLoop.value);
   gameLoop.value = setInterval(moveDown, speed.value);
-
-  startEndGameText.value = "End Game";
 }
 
 /**
@@ -170,6 +170,8 @@ function spawnPiece() {
   // Check for game over condition
   if (checkCollision()) {
     gameOver.value = true;
+    saveScores.value = true;
+    gameIdle.value = true;
     clearInterval(gameLoop.value);
   }
 }
@@ -435,7 +437,7 @@ function handleKeyDown(e) {
 // Vue lifecycle hooks
 onMounted(() => {
   window.addEventListener("keydown", handleKeyDown);
-  initGame(false);
+  initGame();
 });
 
 onUnmounted(() => {
@@ -510,6 +512,13 @@ function shouldShowNextPieceBlock(gridX, gridY) {
     <h1 class="mb-6 text-center font-mono text-4xl font-bold">vuetris</h1>
 
     <div class="flex flex-col items-start gap-8 md:flex-row">
+      <div class="w-64 rounded-lg bg-emerald-800 p-6">
+        <HighScores
+          :score="score.toLocaleString()"
+          :save-score="saveScores"
+          @score-saved="saveScores = false"
+        ></HighScores>
+      </div>
       <!-- Game Board -->
       <div class="relative overflow-hidden rounded bg-emerald-900 p-0">
         <!-- Brick Border - Consistent pattern on all sides -->
