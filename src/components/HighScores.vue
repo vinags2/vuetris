@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from "vue";
 
 const props = defineProps({
   name: String,
-  score: Number | String,
+  score: Number,
   saveScore: Boolean,
 });
 
@@ -60,7 +60,7 @@ watch(
     <ul class="list-disc pl-6">
       <li v-for="(score, index) in scores" :key="index" class="mb-1">
         <!-- {{ score.name }} : {{ score.value }} -->
-        {{ score.value }}
+        {{ score.value.toLocaleString() }}
       </li>
     </ul>
   </div>

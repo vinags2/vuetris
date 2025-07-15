@@ -66,14 +66,16 @@ const saveScores = ref(false);
 
 // Computed property for game speed based on level
 const speed = computed(() => Math.max(100, 1000 - (level.value - 1) * 100));
-const startEndGameText = computed(() =>
+
+// Computed property for start/end game button text
+const startOrEndGameText = computed(() =>
   gameIdle.value ? "Start Game" : "End Game",
 );
 
 /**
  * Start/End game
  */
-function startEndGame() {
+function startOrEndGame() {
   if (gameIdle.value) {
     startGame();
   } else {
@@ -514,7 +516,7 @@ function shouldShowNextPieceBlock(gridX, gridY) {
     <div class="flex flex-col items-start gap-8 md:flex-row">
       <div class="w-64 rounded-lg bg-emerald-800 p-6">
         <HighScores
-          :score="score.toLocaleString()"
+          :score="score"
           :save-score="saveScores"
           @score-saved="saveScores = false"
         ></HighScores>
@@ -667,7 +669,7 @@ function shouldShowNextPieceBlock(gridX, gridY) {
           >
             <!-- Fixed size container for next piece to prevent layout shifts -->
             <div class="grid h-16 w-20 grid-cols-4 gap-0.5">
-              <template v-if="nextPiece">
+              <template v-if="nextPiece && gameIdle == false">
                 <!-- Create a 4x4 grid and position the piece in the center -->
                 <div v-for="gridY in 4" :key="'grid-' + gridY" class="contents">
                   <div
@@ -708,15 +710,16 @@ function shouldShowNextPieceBlock(gridX, gridY) {
             <button
               @click="togglePause"
               :disabled="gameOver"
+              v-if="gameIdle == false"
               class="w-full rounded bg-emerald-700 py-2 font-bold transition-colors hover:bg-emerald-600 disabled:bg-emerald-800 disabled:opacity-50"
             >
               {{ isPaused ? "Resume" : "Pause" }}
             </button>
             <button
-              @click="startEndGame"
+              @click="startOrEndGame"
               class="w-full rounded bg-emerald-600 py-2 font-bold transition-colors hover:bg-emerald-500"
             >
-              {{ startEndGameText }}
+              {{ startOrEndGameText }}
             </button>
           </div>
 
