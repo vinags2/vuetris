@@ -8,6 +8,14 @@ function saveSettings() {
   localStorage.setItem("showWelcome", showWelcome.value);
   emit("close");
 }
+
+const useDateInHighScores = ref(
+  (localStorage.getItem("useDate") || "false") == "true",
+);
+
+function useDate(e) {
+  localStorage.setItem("useDate", !useDateInHighScores.value);
+}
 </script>
 <template>
   <div
@@ -27,6 +35,18 @@ function saveSettings() {
         />
         <label for="show-welcome" class="text-sm font-medium text-gray-200">
           Show Welcome Screen on Start
+        </label>
+      </div>
+      <div class="mb-4 flex items-center space-x-2">
+        <input
+          @click="useDate($event)"
+          v-model="useDateInHighScores"
+          id="use-date"
+          type="checkbox"
+          class="rounded-md border-gray-300 text-black shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+        />
+        <label for="use-date" class="text-sm font-medium text-gray-200">
+          Use date in high scores
         </label>
       </div>
       <div class="flex items-center">

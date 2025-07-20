@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 
 const props = defineProps({
   localStorageAvailable: Boolean,
@@ -7,11 +7,44 @@ const props = defineProps({
 
 const emit = defineEmits(["showWelcome"]);
 
-const name = ref(
+const name = ref("anonymous");
+
+const today = computed(() => {
+  return new Date().toLocaleDateString("en-AU", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+});
+
+const useDateInHighScores = ref(
   props.localStorageAvailable
-    ? localStorage.getItem("playerName") || ""
-    : "anonymous",
+    ? (localStorage.getItem("useDate") || "false") == "true"
+    : false,
 );
+
+function setName() {
+  if (useDateInHighScores.value) {
+    return today.value;
+  } else if (props.localStorageAvailable) {
+    return localStorage.getItem("playerName");
+  }
+}
+
+let oldName = name.value;
+const nameRef = ref(null);
+
+function useDate(e) {
+  if (!e.target.checked) {
+    name.value = oldName;
+  } else {
+    oldName = name.value;
+    name.value = today.value;
+  }
+  if (props.localStorageAvailable)
+    localStorage.setItem("useDate", !useDateInHighScores.value);
+  nameRef.value.focus();
+}
 
 function startGame() {
   saveSettings();
@@ -29,6 +62,10 @@ function saveSettings() {
   if (props.localStorageAvailable)
     localStorage.setItem("showWelcome", showWelcome.value);
 }
+
+onMounted(() => {
+  name.value = setName();
+});
 </script>
 
 <template>
@@ -46,6 +83,7 @@ function saveSettings() {
         </label>
         <input
           id="name"
+          ref="nameRef"
           type="text"
           v-model="name"
           autofocus
@@ -54,10 +92,21 @@ function saveSettings() {
       </div>
       <div class="mb-4 flex items-center space-x-2">
         <input
+          @click="useDate($event)"
+          v-model="useDateInHighScores"
+          id="use-date"
+          type="checkbox"
+          class="rounded-md border-gray-300 text-black shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+        />
+        <label for="use-date" class="text-sm font-medium text-gray-200">
+          Use date in high scores
+        </label>
+      </div>
+      <div class="mb-4 flex items-center space-x-2">
+        <input
           id="show-welcome"
           type="checkbox"
           v-model="showWelcome"
-          autofocus
           class="rounded-md border-gray-300 text-black shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
         />
         <label for="show-welcome" class="text-sm font-medium text-gray-200">
