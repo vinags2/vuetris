@@ -3,6 +3,9 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import HighScores from "./HighScores.vue";
 import SettingsIcon from "./SettingsIcon.vue";
 import Settings from "./Settings.vue";
+import AboutIcon from "./AboutIcon.vue";
+import About from "./About.vue";
+import GitHubIcon from "./GitHubIcon.vue";
 
 const props = defineProps({
   localStorageAvailable: Boolean,
@@ -494,42 +497,32 @@ function showSettingsPage() {
   if (!gameIdle.value) isPaused.value = true;
   showSettings.value = true;
 }
+
+// Show the About page
+const showAbout = ref(false);
+function showAboutPage() {
+  if (!props.localStorageAvailable) showSettings.value = false;
+  if (!gameIdle.value) isPaused.value = true;
+  showAbout.value = true;
+}
 </script>
 
 <template>
   <div v-if="showSettings">
     <Settings @close="showSettings = false"></Settings>
   </div>
+  <div v-if="showAbout">
+    <About @close="showAbout = false"></About>
+  </div>
   <div
     v-else
     class="relative flex min-h-screen flex-col items-center justify-center bg-emerald-900 p-4 text-emerald-100"
   >
-    <!-- GitHub Link Card -->
-    <a
-      href="https://github.com/Mint-Diary/vuetris"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="absolute right-4 bottom-4 flex items-center gap-2 rounded-lg border border-emerald-700/50 bg-emerald-800/90 p-3 shadow-lg transition-colors duration-300 hover:border-emerald-500/50 hover:bg-emerald-700/90"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="h-5 w-5"
-      >
-        <path
-          d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"
-        ></path>
-        <path d="M9 18c-4.51 2-5-2-7-2"></path>
-      </svg>
-      <span class="text-sm font-medium">Check out the code on GitHub</span>
-    </a>
+    <AboutIcon
+      @click="showAboutPage"
+      class="absolute top-18 right-18 cursor-pointer"
+      v-if="props.localStorageAvailable"
+    ></AboutIcon>
     <SettingsIcon
       @click="showSettingsPage"
       class="absolute top-18 right-4 cursor-pointer"
