@@ -24,6 +24,7 @@ function useDate(e) {
     <div
       class="border-b-2 border-gray-200 bg-emerald-700 px-4 py-8 text-center text-emerald-100"
     >
+      <h1 class="mb-4 text-4xl font-bold">Vuetris</h1>
       <h1 class="mb-4 text-4xl font-bold">Settings</h1>
       <div class="mb-4 flex items-center space-x-2">
         <input
