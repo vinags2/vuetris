@@ -8,18 +8,22 @@ const props = defineProps({
 
 const emit = defineEmits(["scoreSaved"]);
 
-const scores = ref([]);
+const scores = ref([{}]);
 const playerName = ref(localStorage.getItem("playerName") || "anonymous");
 const isNewHighScore = ref(false);
 const maxScores = 12;
 
 const saveScores = () => {
-  scores.value?.push({
-    key: scores.value.length,
-    name: playerName.value,
-    value: props.score,
-  });
-  scores.value.slice(0, maxScores - 1);
+  if (scores.value === null) {
+    scores.value = [{ key: 0, name: playerName.value, value: props.score }];
+  } else {
+    scores.value?.push({
+      key: scores.value?.length,
+      name: playerName.value,
+      value: props.score,
+    });
+  }
+  scores.value?.slice(0, maxScores - 1);
 
   localStorage.setItem(
     "scores",
@@ -35,7 +39,7 @@ const showScores = () => {
 const clearScores = () => {
   if (window.confirm("Are you sure you want to clear the scores?")) {
     localStorage.removeItem("scores");
-    scores.value = [];
+    scores.value = [{}];
   }
 };
 
@@ -52,10 +56,12 @@ onMounted(() => {
 const newHighScore = () => {
   if (props.score === 0) {
     isNewHighScore.value = false;
-  } else if (scores.value.length < maxScores) {
+  } else if (scores.value === null) {
+    isNewHighScore.value = true;
+  } else if (scores.value?.length < maxScores) {
     isNewHighScore.value = true;
   } else {
-    isNewHighScore.value = scores.value.some(
+    isNewHighScore.value = scores.value?.some(
       (score) => score.value < props.score,
     );
   }
@@ -102,7 +108,7 @@ watch(
         >
           <div>{{ displayName(score.name) }}</div>
           <div class="col-span-2 justify-self-end text-right">
-            {{ score.value.toLocaleString() }}
+            {{ score.value?.toLocaleString() }}
           </div>
         </div>
       </li>
